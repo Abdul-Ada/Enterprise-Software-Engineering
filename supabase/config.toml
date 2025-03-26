@@ -289,7 +289,5 @@ s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
 
-#[functions.pokemon-question]
-#SUPABASE_URL = "https://chtkfzwofusetduxxorv.supabase.co"
-#SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNodGtmendvZnVzZXRkdXh4b3J2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MTI3MTg4MSwiZXhwIjoyMDU2ODQ3ODgxfQ.I7Nv8swo95D1D1A1wKTCiQ33X0UJD8N5znyrd9YfEJU"
-
+[functions.pokemon-question]
+verify_jwt = false
