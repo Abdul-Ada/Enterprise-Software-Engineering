@@ -1,79 +1,230 @@
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    line-height: 1.6;
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
 }
-h1 {
-    color: #333;
-}
-#messages {
-    margin-top: 1rem;
-    border: 1px solid #eee;
-    padding: 1rem;
-    border-radius: 5px;
-}
-.message {
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    background-color: #f9f9f9;
-    border-radius: 3px;
-}
-button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-#status {
-    margin-top: 1rem;
-    font-style: italic;
-}
-.loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid red;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    margin: auto;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
 
-  :root {
-    --bg: #fff;
-    --text: #000;
+/* Dynamic gradient background */
+body {
+  background: linear-gradient(135deg, #e0eafc, #cfdef3);
+  background-size: 400% 400%;
+  animation: backgroundScroll 20s ease infinite;
+  color: #222;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s, color 0.3s;
+  padding: 2rem;
+  text-align: center;
+}
+
+@keyframes backgroundScroll {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+body.dark {
+  background: linear-gradient(135deg, #1c1c1c, #121212);
+  color: #f5f5f5;
+}
+
+/* Theme toggle */
+#themeToggle {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  padding: 8px 12px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1000;
+}
+body.dark #themeToggle {
+  background-color: #eee;
+  color: #222;
+}
+
+/* Card containers */
+#homeScreen, #quizScreen {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  max-width: 500px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+body.dark #homeScreen, body.dark #quizScreen {
+  background: rgba(32, 32, 32, 0.6);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Leaderboard */
+#leaderboard {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+}
+#leaderboard li {
+  padding: 6px 0;
+  border-bottom: 1px solid #ccc;
+  font-weight: 600;
+}
+body.dark #leaderboard li {
+  border-color: #444;
+}
+
+/* Buttons */
+button {
+  background: rgba(0, 123, 255, 0.85);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  margin: 10px 5px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; 
+}
+button:hover {
+  background: rgba(0, 123, 255, 1);
+  transform: scale(1.05);
+}
+body.dark button {
+  background: rgba(255, 140, 0, 0.85);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+body.dark button:hover {
+  background: rgba(255, 140, 0, 1);
+}
+
+button .icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem; /* Adjust size if needed */
+}
+
+/* Timer bar */
+#timerBarContainer {
+  width: 100%;
+  background: #ddd;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 10px 0 20px;
+}
+#timerBar {
+  height: 100%;
+  background-color: #28a745;
+  transition: width 1s linear;
+}
+body.dark #timerBarContainer {
+  background: #444;
+}
+body.dark #timerBar {
+  background-color: #4caf50;
+}
+
+/* Result and Score */
+#result, #score {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+/* Loading spinner */
+.loader {
+  width: 24px;
+  height: 24px;
+  border: 4px solid #999;
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  margin: 10px auto;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  body.dark {
-    --bg: #111;
-    --text: #eee;
-  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
   body {
-    background: var(--bg);
-    color: var(--text);
-    transition: background 0.3s, color 0.3s;
+    padding: 1rem;
   }
-  #timerBarContainer {
+  button {
     width: 100%;
-    background: #ddd;
-    height: 10px;
-    margin-top: 10px;
+    font-size: 1rem;
   }
-  #timerBar {
-    height: 100%;
-    background: #f00;
-    transition: width 1s linear;
-  }
-    
+}
+
+#leaderboardSection {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #ffffffcc, #e0e0e0cc);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.dark #leaderboardSection {
+  background: linear-gradient(135deg, #1f1f1f, #2b2b2b);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+}
+
+#leaderboard {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+#leaderboard li {
+  background: #ffffffdd;
+  border-radius: 12px;
+  margin: 8px auto;
+  padding: 10px 20px;
+  max-width: 90%;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 6px solid #007bff;
+  transition: transform 0.2s;
+}
+
+#leaderboard li:hover {
+  transform: scale(1.02);
+}
+
+body.dark #leaderboard li {
+  background: #222;
+  color: #fff;
+  border-left: 6px solid #ff8c00;
+}
+
+.leaderboard-rank {
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+.leaderboard-name {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.leaderboard-score {
+  font-weight: bold;
+  color: #28a745;
+}

@@ -9,30 +9,37 @@
 <body>
   <button id="themeToggle">Toggle Theme</button>
   
-  <!-- Home Screen -->
-  <div id="homeScreen">
-    <h1>Pokémon Quiz</h1>
-    <div id="leaderboardSection">
-      <h2>🏆 Leaderboard</h2>
-      <ul id="leaderboard"></ul>
-    </div>
-    <button id="startBtn">Start Quiz</button>
+<!-- Home Screen -->
+<div id="homeScreen">
+  <h1>🎮 Pokémon Quiz</h1>
+
+  <div id="leaderboardSection">
+    <h2>🏆 Leaderboard</h2>
+    <ul id="leaderboard"></ul>
   </div>
 
-  <!-- Quiz Screen -->
-  <div id="quizScreen" style="display: none;">
-    <div id="spriteContainer">
-        <img id="sprite" alt="Pokémon" style="height: 100px; margin-bottom: 10px;" />
-    </div>
-    <p id="question">Press Start to begin</p>
-    <div id="choices"></div>
-    <div id="timerBarContainer">
-      <div id="timerBar"></div>
-    </div>
-    <p id="timer"></p>
-    <p id="result"></p>
-    <p id="score"></p>
+  <button id="startBtn">
+    <img src="https://img.icons8.com/ios-filled/24/ffffff/play--v1.png" alt="Play Icon" class="icon" />
+    Start Quiz
+  </button>
+</div>
+
+<!-- Quiz Screen -->
+<div id="quizScreen" style="display: none;">
+  <img id="sprite" src="" alt="Pokémon Sprite" style="height: 120px; margin-bottom: 10px;" />
+  <p id="question">Press Start to begin</p>
+
+  <!-- Timer Bar -->
+  <div id="timerBarContainer">
+    <div id="timerBar"></div>
   </div>
+
+  <div id="choices"></div>
+  <p id="timer"></p>
+  <p id="result"></p>
+  <p id="score"></p>
+</div>
+
 
   <script src="client.js"></script>
 </body>
