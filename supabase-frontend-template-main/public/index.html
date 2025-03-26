@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Fetch</title>
-    <link href="styles.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokémon Quiz</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <h1>Sample Fetch</h1>
-    <button id="fetchBtn">Fetch Messages</button>
-    <div id="status">Click the button to fetch messages</div>
-    <div id="messages"></div>
+  <button id="themeToggle">Toggle Theme</button>
+  
+  <!-- Home Screen -->
+  <div id="homeScreen">
+    <h1>Pokémon Quiz</h1>
+    <div id="leaderboardSection">
+      <h2>🏆 Leaderboard</h2>
+      <ul id="leaderboard"></ul>
+    </div>
+    <button id="startBtn">Start Quiz</button>
+  </div>
 
-    <script src="client.js"></script>
+  <!-- Quiz Screen -->
+  <div id="quizScreen" style="display: none;">
+    <div id="spriteContainer">
+        <img id="sprite" alt="Pokémon" style="height: 100px; margin-bottom: 10px;" />
+    </div>
+    <p id="question">Press Start to begin</p>
+    <div id="choices"></div>
+    <div id="timerBarContainer">
+      <div id="timerBar"></div>
+    </div>
+    <p id="timer"></p>
+    <p id="result"></p>
+    <p id="score"></p>
+  </div>
+
+  <script src="client.js"></script>
 </body>
 </html>
