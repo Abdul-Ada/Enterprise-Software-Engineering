@@ -1,116 +1,130 @@
-Pokémon Quiz – Enterprise Software Engineering Project
-🧠 Introduction
-This project is a full-stack enterprise web application developed for the Enterprise Software Engineering module. It is a real-time Pokémon quiz that dynamically pulls data from the PokéAPI using Supabase Edge Functions. Users answer timed questions, and scores are submitted to a global leaderboard.
+# Pokémon Quiz – Enterprise Software Engineering Project
 
-🚀 Solution Overview
-The app challenges users to identify Pokémon types, abilities, stats, and more, progressing from easy to difficult questions. Scores are tracked and stored in Supabase, allowing users to compete on a live leaderboard.
+## 🧠 Introduction
 
-🎯 Project Aim & Objectives
-Aim:
-To design, build, and demonstrate a scalable, interactive, and secure full-stack quiz application.
+This project is a full-stack enterprise web application developed for the **Enterprise Software Engineering** module. It is a secure, scalable, and responsive Pokémon quiz game that pulls live data from the PokéAPI using Supabase Edge Functions. Players answer progressively harder questions within a time limit, and their scores are submitted to a live leaderboard. The app showcases enterprise principles such as modular architecture, cloud deployment, and robust error handling.
 
-Objectives:
+---
 
-✅ Implement dynamic question generation with Supabase Edge Functions.
+## 🚀 Solution Overview
 
-✅ Store and retrieve user scores using Supabase Postgres.
+This application is a full-stack Pokémon-themed quiz game that combines real-time data, secure authentication, and dynamic gameplay. Built using Supabase and vanilla JavaScript, the solution features three integrated layers:
 
-✅ Authenticate and manage usernames with update logic.
+- **Frontend**: A responsive interface with theme toggle, keyboard support, and animations that delivers an engaging user experience.
+- **Middleware**: Supabase Edge Functions dynamically generate quiz questions based on player score and difficulty, using real-time data from the PokéAPI.
+- **Backend**: Supabase Postgres stores leaderboard scores, while Supabase Auth secures login/signup and enforces access control.
 
-✅ Build a responsive, animated UI with dark/light theme toggle.
+The game adapts question difficulty as the user progresses, supports user authentication, and records scores in a global leaderboard. Error handling and fallback mechanisms ensure the app remains responsive even during API issues. The architecture is modular, scalable, and optimized for performance and security.
 
-✅ Deploy and test all three layers: frontend, middleware, and backend.
+---
 
-📋 Feature Overview
-Feature	Description	Location
-Dynamic Quiz	Loads questions via Supabase Edge Function based on player score (difficulty curve)	supabase/functions/pokemon-question/index.ts
-Leaderboard	Stores top scores in Supabase. If a username exists, asks before replacing.	client.js, index.html, Supabase DB
-Dark/Light Mode	Toggle button to switch UI theme.	client.js, styles.css
-Keyboard Support	Users can press 1–4 keys to answer faster.	client.js
-Timer Bar	Visual countdown for each question.	client.js, styles.css
-Responsive UI	Works on mobile and desktop, styled with glassy buttons and icons.	styles.css
-Error Handling & Fallbacks	Graceful error messages and UI fallbacks.	client.js
+## 📌 Project Aim & Objectives
 
-Have you successfully implemented key functionalities?
-Is the application fully functional and meeting its intended purpose?
+### **Aim**
 
-🏗️ Enterprise Considerations
-Area	Details
-Performance	Edge Function optimizes API calls (e.g., species lookup only if needed). Question difficulty progresses logically.
-Scalability	Stateless function-based architecture. Uses Supabase for scalable Postgres hosting.
-Robustness	Includes error handling for API failure, user input, and timeouts. Leaderboard updates are conditional.
-Security	Only the anon key is exposed. Supabase handles access with RLS and roles. Production setup would hide service roles.
-Deployment	Middleware is deployed via Supabase Edge Functions. Frontend runs locally or on any static hosting provider.
+The primary aim of this project is to **design, build, and deploy a secure, responsive, and scalable full-stack quiz application** that showcases enterprise-grade architecture. The application is intended to demonstrate how dynamic APIs, real-time data processing, and secure authentication can be integrated using modern cloud-based technologies like Supabase.
 
-Is the three-layer architecture well-structured?
-Are enterprise-grade qualities (security, scalability, robustness) considered?
+### **Objectives**
 
-🛠️ Installation & Usage Instructions
-🔧 Prerequisites
-Node.js (v16+)
+- ✅ **Implement Dynamic Question Logic**  
+  Use Supabase Edge Functions and PokéAPI to generate dynamic, real-time quiz questions that scale with the user's score.
 
-Supabase CLI
+- ✅ **Enable Secure User Authentication**  
+  Use Supabase Auth to handle user registration, login, and logout, ensuring secure access to the app and leaderboard.
 
-Supabase account
+- ✅ **Create a Real-Time Leaderboard System**  
+  Store scores in Supabase Postgres. Implement update logic to prevent duplicate entries and maintain a competitive global ranking.
 
-curl for testing Edge Functions locally (optional)
+- ✅ **Design an Interactive and Accessible Frontend**  
+  Build a responsive and engaging UI with dark mode, keyboard controls, and animations for all screen sizes.
 
-⚙️ Setup
-bash
-Copy
-Edit
-git clone <repo-url>
-cd <repo>
+- ✅ **Ensure Enterprise-Level Architecture**  
+  Apply modular code structure, error handling, cloud deployment, and environment variable security practices.
+
+---
+
+## 📋 Feature Overview
+
+| Feature | Purpose | Code Location & Components |
+|--------|---------|-----------------------------|
+| **Dynamic Quiz Engine** | Dynamically generates quiz questions based on the user’s score. The difficulty increases with progress—from type-based to classification-based questions. | `supabase/functions/pokemon-question/index.ts`<br>`services/easyQuestions.ts`, `mediumQuestions.ts`, `hardQuestions.ts` |
+| **Leaderboard System** | Displays the top 5 scores and allows players to submit or update their scores after each session. Duplicate usernames are prompted for confirmation. | `client.js` (`loadLeaderboard()`, `saveScore()`)<br>Supabase leaderboard table<br>`index.html` (`#leaderboard`) |
+| **User Authentication** | Secure login/signup using Supabase Auth. Users must be authenticated before accessing the quiz. Session is tracked and login state affects UI rendering. | `client.js` (`signupBtn`, `loginBtn`, `logoutBtn`, `handleAuth()`)<br>`index.html` (`#auth-section`) |
+| **Edge Function Endpoint** | Edge Function acts as the core API for quiz question generation. Responds to GET requests with a difficulty-adjusted question payload. | `supabase/functions/pokemon-question/index.ts`<br>Endpoint: `/functions/v1/pokemon-question?score=X` |
+| **Dark/Light Theme Toggle** | Enhances user experience by letting users switch between dark and light UI themes with a single click. | `client.js` (`themeToggle.onclick`)<br>`styles.css`, `index.html` |
+| **Keyboard Input** | Improves accessibility and responsiveness by letting users answer via keyboard (1–4). | `client.js` (`getQuestion()`, `document.onkeydown`) |
+| **Timer & Visual Bar** | Each question has a 15-second timer with a visual progress bar. Auto-triggers end if time runs out. | `client.js` (`startTimer()`), `styles.css`, `index.html` |
+| **Responsive UI Design** | Ensures the app is usable across screen sizes with flexible layouts and modern UI. | `styles.css` (media queries, flexbox/grid), `index.html` |
+| **Error Handling & Fallbacks** | Handles API errors, login/signup failures, and Supabase issues with user-friendly messages. | `client.js` (alerts, fallback logic)<br>`index.ts` (fallback from Supabase DB) |
+
+---
+
+## 🏗️ Enterprise Considerations
+
+| Area | Details |
+|------|---------|
+| **Performance** | Supabase Edge Functions minimize load using caching. Expensive operations like species lookup are conditional. Lightweight frontend logic ensures a responsive experience. |
+| **Scalability** | Stateless edge functions scale horizontally. Supabase Postgres supports concurrent read/writes. Modular code enables easy feature extensions. |
+| **Robustness** | All fetch and async logic uses `try/catch`. Fallback content is loaded from a Supabase table if the PokéAPI fails. |
+| **Security** | Only the `anonKey` is exposed on the frontend. Supabase Auth is used for secure authentication. Passwords are hashed. RLS protects sensitive data. |
+| **Deployment** | Supabase Edge Functions are deployed via CLI. Frontend is served via `node server.js` or hosted on Netlify/Vercel. Environment variables manage credentials securely. |
+
+---
+
+## 🛠️ Installation & Usage Instructions
+
+### 🔧 Prerequisites
+
+- Node.js (v16+)
+- Supabase CLI
+- Supabase account/project
+
+### ⚙️ Setup Steps
+
+```bash
+git clone <your-repo-url>
+cd <your-repo-name>
 npm install
-Ensure Supabase is installed and logged in:
-
-supabase start
-
-bash
-Copy
-Edit
 npx supabase login
 npx supabase link --project-ref <your-project-id>
-▶️ Running the App Locally
-bash
-Copy
-Edit
-# Deploy your Edge function
+```
+
+Create a `.env` or `secret_key.env` file and add:
+
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+### ▶️ Running the Application
+
+```bash
+npx supabase start
 npx supabase functions deploy pokemon-question
-
-# Start the local server
 node server.js
+```
 
-# Open browser
-http://localhost:3000
-🔄 Deployment
-Supabase Edge Functions: Deployed via npx supabase functions deploy
+Then open [http://localhost:3000](http://localhost:3000)
 
-Frontend: Runs locally from public/ or can be hosted via Netlify, Vercel, etc.
+---
 
-No hardcoded service role keys in frontend
+## 🐛 Known Issues & Future Enhancements
 
+While the Pokémon Quiz application is fully functional and demonstrates key enterprise software engineering principles, there are a few known limitations and opportunities for future improvement.
 
-Has the application been successfully deployed?
-Have best deployment practices (e.g., securing environment variables) been followed?
+### Known Issues
 
+Some Pokémon entries returned by the PokéAPI may be missing data such as sprites or species classifications, which can result in fallback questions. The leaderboard currently supports only simple username tracking via email. Real-time updates are not implemented yet and require a page refresh. Some network errors may display fallback UI but not always offer retry options.
 
-🐛 Known Issues & Future Enhancements
- No user login/auth (username is manually entered).
+### Future Enhancements
 
- Some Pokémon data is missing or inconsistent.
+Planned improvements include real-time leaderboard updates using Supabase Subscriptions, adding sound effects and animations, and offering OAuth login support (Google/GitHub). UI accessibility improvements, multi-language support, and fully automated CI/CD deployment pipelines are also on the roadmap. Automated testing (unit and integration) will improve long-term reliability and maintainability.
 
- Add real-time leaderboard (via Supabase subscriptions).
+---
 
- Add sprite animation / sound effects.
+## 📚 References
 
- Deploy frontend to Netlify with build pipeline.
-
-📚 References
-Supabase Documentation
-
-PokéAPI
-
-MDN Web Docs
-
-Supabase Frontend Starter Template
+- [Supabase Documentation](https://supabase.com/docs)
+- [PokéAPI](https://pokeapi.co/)
+- [MDN Web Docs](https://developer.mozilla.org/)
+- [Supabase Frontend Starter Template](https://github.com/supabase/supabase/tree/master/examples)
