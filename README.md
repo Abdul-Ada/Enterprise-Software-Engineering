@@ -139,7 +139,6 @@ Goal: Apply best practices in modular design, error handling, security, and depl
 | **User Authentication** | Secure login/signup using Supabase Auth. Users must be authenticated before accessing the quiz. Session is tracked and login state affects UI rendering. | `client.js` (`signupBtn`, `loginBtn`, `logoutBtn`, `handleAuth()`)<br>`index.html` (`#auth-section`) |
 | **Edge Function Endpoint** | Edge Function acts as the core API for quiz question generation. Responds to GET requests with a difficulty-adjusted question payload. | `supabase/functions/pokemon-question/index.ts`<br>Endpoint: `/functions/v1/pokemon-question?score=X` |
 | **Dark/Light Theme Toggle** | Enhances user experience by letting users switch between dark and light UI themes with a single click. | `client.js` (`themeToggle.onclick`)<br>`styles.css`, `index.html` |
-| **Keyboard Input** | Improves accessibility and responsiveness by letting users answer via keyboard (1–4). | `client.js` (`getQuestion()`, `document.onkeydown`) |
 | **Timer & Visual Bar** | Each question has a 15-second timer with a visual progress bar. Auto-triggers end if time runs out. | `client.js` (`startTimer()`), `styles.css`, `index.html` |
 | **Responsive UI Design** | Ensures the app is usable across screen sizes with flexible layouts and modern UI. | `styles.css` (media queries, flexbox/grid), `index.html` |
 | **Error Handling & Fallbacks** | Handles API errors, login/signup failures, and Supabase issues with user-friendly messages. | `client.js` (alerts, fallback logic)<br>`index.ts` (fallback from Supabase DB) |
@@ -150,7 +149,7 @@ Goal: Apply best practices in modular design, error handling, security, and depl
 This section outlines the architectural, performance, and engineering decisions that align the Pokémon Quiz App with enterprise-grade standards of scalability, security, resilience, and deployment readiness.
 
 **📈 Performance**
-Optimized for low latency and minimal overhead on both the client and server.
+Optimised for low latency and minimal overhead on both the client and server.
 
 **✅ Edge Function In-Memory Caching**
 To avoid redundant API calls during a single function lifecycle, Pokémon data is cached in memory inside the Edge Function.
@@ -189,7 +188,7 @@ if (difficulty === 'hard') {
 ```
 
 Why it matters:
-Minimizes external API load and keeps question generation fast for easier levels.
+Minimises external API load and keeps question generation fast for easier levels.
 
 ✅ Frontend Efficiency
 Async operations, minimal blocking, and clean UI updates.
@@ -214,7 +213,7 @@ Why it matters:
 This ensures a responsive user experience with smooth interactions and low overhead, even on low-powered devices.
 
 **⚖️ Scalability**
-Built using cloud-native, stateless, and modular principles for horizontal scalability.
+Built using cloud-native, stateless, and modular principles for horisontal scalability.
 
 **✅ Stateless Edge Functions**
 Supabase Edge Functions are stateless and scalable globally.
@@ -374,7 +373,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, ANON_KEY);
 ```
 
 Why it matters:
-Reduces risk of misuse or unauthorized data access from the client side.
+Reduces risk of misuse or unauthorised data access from the client side.
 
 **✅ Row-Level Security + Hashed Passwords**
 Supabase RLS policies restrict access so users only see and edit their own records.
@@ -424,20 +423,6 @@ SUPABASE_SERVICE_ROLE_KEY=your-secret-role-key
 Why it matters:
 Prevents credentials from being exposed in public repositories or browser JavaScript.
 
-**✅ CI/CD Ready**
-Easily adaptable to GitHub Actions, Netlify Deploy Hooks, or custom pipelines.
-
-```
-yaml
-Copy
-Edit
-# .github/workflows/deploy.yml
-- name: Deploy Edge Function
-  run: npx supabase functions deploy pokemon-question
-```
-  
-Why it matters:
-Enables automated testing, linting, and deployment for faster, safer iterations.
 
 ---
 
@@ -490,7 +475,7 @@ Leaderboard Requires Manual Refresh
 The leaderboard is updated using a static SELECT query triggered on page load or after a score submission. It currently does not support real-time updates, meaning players won’t see newly submitted scores unless the page is manually refreshed. This can diminish the competitive experience by delaying feedback on ranking.
 
 Minimal Profile & Score Management
-The application uses the authenticated user's email as the display name and does not support custom usernames, profile editing, or avatars. Users can only submit a score once per session unless they explicitly confirm overwriting. Additionally, multiple scores from the same user are not clearly differentiated. This limits personalization and may confuse users wishing to track multiple attempts or high scores.
+The application uses the authenticated user's email as the display name and does not support custom usernames, profile editing, or avatars. Users can only submit a score once per session unless they explicitly confirm overwriting. Additionally, multiple scores from the same user are not clearly differentiated. This limits personalisation and may confuse users wishing to track multiple attempts or high scores.
 
 Limited Error Feedback & Recovery Options
 While most API failures are caught and handled with alerts, certain issues (e.g., login/signup errors, network issues) do not provide granular error feedback. Users cannot retry failed operations without refreshing the page, and errors are not always explained (e.g., password too weak, email already taken). This can hinder accessibility for non-technical users.
@@ -513,7 +498,7 @@ Accessibility Improvements
 Planned improvements include full screen reader compatibility, keyboard-only navigation, ARIA labeling, and colorblind-friendly theme options. These changes will broaden usability for users with visual, motor, or cognitive impairments.
 
 Multi-Language Support (i18n)
-Internationalization will be implemented by externalizing all UI text into translation files (e.g., en.json, es.json). This will make the app more inclusive and usable by non-English speakers.
+Internationalisation will be implemented by externalising all UI text into translation files (e.g., en.json, es.json). This will make the app more inclusive and usable by non-English speakers.
 
 Profile Management & Session History
 Future versions may allow users to set custom usernames and avatars, track their quiz attempt history, and view or reset past scores. This encourages repeat playthroughs and opens the door to gamification features like badges or milestones.
