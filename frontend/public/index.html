@@ -5,42 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pokémon Quiz</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.3/dist/umd/supabase.min.js"></script>
+  <script src="client.js" defer></script>
 </head>
 <body>
-  <button id="themeToggle">Toggle Theme</button>
-  
-<!-- Home Screen -->
-<div id="homeScreen">
-  <h1>🎮 Pokémon Quiz</h1>
+  <!-- 🌗 Theme Toggle -->
+  <button id="themeToggle">🌓 Toggle Theme</button>
 
-  <div id="leaderboardSection">
-    <h2>🏆 Leaderboard</h2>
-    <ul id="leaderboard"></ul>
+  <!-- 🔐 Auth Section -->
+  <div id="auth-section">
+    <h2>Login or Sign Up</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="loginBtn">Login</button>
+    <button id="signupBtn">Sign Up</button>
+    <button id="logoutBtn" style="display: none;">Logout</button>
   </div>
 
-  <button id="startBtn">
-    <img src="https://img.icons8.com/ios-filled/24/ffffff/play--v1.png" alt="Play Icon" class="icon" />
-    Start Quiz
-  </button>
-</div>
-
-<!-- Quiz Screen -->
-<div id="quizScreen" style="display: none;">
-  <img id="sprite" src="" alt="Pokémon Sprite" style="height: 120px; margin-bottom: 10px;" />
-  <p id="question">Press Start to begin</p>
-
-  <!-- Timer Bar -->
-  <div id="timerBarContainer">
-    <div id="timerBar"></div>
+  <!-- 🏠 Home Screen -->
+  <div id="homeScreen" style="display: none;">
+    <h1>🎮 Pokémon Quiz</h1>
+    <div id="leaderboardSection">
+      <h2>🏆 Leaderboard</h2>
+      <ul id="leaderboard"></ul>
+    </div>
+    <button id="startBtn">
+      <img src="https://img.icons8.com/ios-filled/24/ffffff/play--v1.png" alt="Play Icon" class="icon" />
+      Start Quiz
+    </button>
   </div>
 
-  <div id="choices"></div>
-  <p id="timer"></p>
-  <p id="result"></p>
-  <p id="score"></p>
-</div>
+  <!-- 🧠 Quiz Screen -->
+  <div id="quizScreen" style="display: none;">
+    <img id="sprite" src="" alt="Pokémon Sprite" style="height: 120px; margin-bottom: 10px;" />
+    <p id="question">Press Start to begin</p>
 
+    <div id="timerBarContainer">
+      <div id="timerBar"></div>
+    </div>
 
-  <script src="client.js"></script>
+    <div id="choices"></div>
+    <p id="timer"></p>
+    <p id="result" class="error-message"></p>
+    <p id="score"></p>
+  </div>
 </body>
 </html>

@@ -228,3 +228,16 @@ body.dark #leaderboard li {
   font-weight: bold;
   color: #28a745;
 }
+
+#auth-section {
+  margin-top: 10px;
+}
+#auth-section input {
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+}

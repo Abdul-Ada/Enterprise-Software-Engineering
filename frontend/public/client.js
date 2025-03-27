@@ -1,5 +1,8 @@
-const apiUrl = "https://chtkfzwofusetduxxorv.functions.supabase.co/pokemon-question";
-const anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNodGtmendvZnVzZXRkdXh4b3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNzE4ODEsImV4cCI6MjA1Njg0Nzg4MX0.2EsaeTf5r1KdMr-U96tXK3Fo8EmcTlWXslewa_us7ho"; // truncated for brevity
+const supabase = window.supabase.createClient(
+  "https://chtkfzwofusetduxxorv.supabase.co", // Supabase URL
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNodGtmendvZnVzZXRkdXh4b3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNzE4ODEsImV4cCI6MjA1Njg0Nzg4MX0.2EsaeTf5r1KdMr-U96tXK3Fo8EmcTlWXslewa_us7ho" // anon key (frontend safe)
+);
+
 
 // DOM Elements
 const homeScreen = document.getElementById("homeScreen");
@@ -15,6 +18,13 @@ const startBtn = document.getElementById("startBtn");
 const themeToggle = document.getElementById("themeToggle");
 const timerBar = document.getElementById("timerBar");
 
+// Auth elements
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
 let currentAnswer = "";
 let score = 0;
 let timer;
@@ -25,134 +35,146 @@ themeToggle.onclick = () => {
   document.body.classList.toggle("dark");
 };
 
-// 🏆 Load leaderboard
-async function loadLeaderboard() {
-  const res = await fetch("https://chtkfzwofusetduxxorv.supabase.co/rest/v1/leaderboard?select=*&order=score.desc&limit=5", {
-    headers: {
-      apikey: anonKey,
-      Authorization: `Bearer ${anonKey}`
-    }
-  });
+// 👤 Handle auth state
+supabase.auth.getSession().then(({ data: { session } }) => {
+  handleAuth(session);
+});
 
-  const data = await res.json();
 
-  if (!Array.isArray(data)) {
-    leaderboardEl.innerHTML = `<li>Error loading leaderboard</li>`;
-    return;
+function handleAuth(session) {
+  const loggedIn = !!session;
+
+  document.getElementById("auth-section").style.display = loggedIn ? "none" : "block";
+  homeScreen.style.display = loggedIn ? "block" : "none";
+  quizScreen.style.display = "none";
+  logoutBtn.style.display = loggedIn ? "inline-block" : "none";
+  startBtn.disabled = !loggedIn;
+
+  if (loggedIn) {
+    loadLeaderboard();
   }
+}
 
-  leaderboardEl.innerHTML = data
-    .map((entry, index) => `
+
+
+// 🧠 Auth logic
+loginBtn.onclick = async () => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email: emailInput.value,
+    password: passwordInput.value,
+  });
+  if (error) alert(error.message);
+};
+
+signupBtn.onclick = async () => {
+  const { error } = await supabase.auth.signUp({
+    email: emailInput.value,
+    password: passwordInput.value,
+  });
+  if (error) alert(error.message);
+  else alert("Signup successful! Please check your email.");
+};
+
+logoutBtn.onclick = async () => {
+  await supabase.auth.signOut();
+  location.reload();
+};
+
+
+
+async function loadLeaderboard() {
+  try {
+    const { data, error } = await supabase
+      .from("leaderboard")
+      .select("*")
+      .order("score", { ascending: false })
+      .limit(5);
+
+    if (error || !Array.isArray(data)) throw new Error("Leaderboard load failed");
+
+    leaderboardEl.innerHTML = data.map((entry, index) => `
       <li class="leaderboard-entry">
         <span class="leaderboard-rank">#${index + 1}</span>
         <span class="leaderboard-name">${entry.username}</span>
         <span class="leaderboard-score">${entry.score}</span>
       </li>
-    `)
-    .join("");
+    `).join("");
+  } catch (err) {
+    leaderboardEl.innerHTML = `<li>⚠️ Could not load leaderboard</li>`;
+    console.error("Leaderboard error:", err.message);
+  }
 }
 
-// 💾 Save or update score
+
 async function saveScore(score) {
-  let username = "";
+  try {
+    const user = (await supabase.auth.getUser()).data.user;
+    const username = user?.email;
+    if (!username) throw new Error("No user found");
 
-  while (!username) {
-    username = prompt("Incorrect! Enter your name for the leaderboard:")?.trim();
-    if (!username) continue;
+    const { data: existing } = await supabase
+      .from("leaderboard")
+      .select("*")
+      .eq("username", username)
+      .maybeSingle();
 
-    const res = await fetch(`https://chtkfzwofusetduxxorv.supabase.co/rest/v1/leaderboard?username=eq.${username}`, {
-      headers: {
-        apikey: anonKey,
-        Authorization: `Bearer ${anonKey}`
-      }
-    });
+    if (existing) {
+      const confirmReplace = confirm(`${username} already exists. Replace score?`);
+      if (!confirmReplace) return;
 
-    const existing = await res.json();
-
-    if (Array.isArray(existing) && existing.length > 0) {
-      const confirmReplace = confirm(`${username} already exists. Do you want to replace their score?`);
-      if (confirmReplace) {
-        const patch = await fetch(`https://chtkfzwofusetduxxorv.supabase.co/rest/v1/leaderboard?username=eq.${username}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: anonKey,
-            Authorization: `Bearer ${anonKey}`,
-            Prefer: "return=representation"
-          },
-          body: JSON.stringify({ score: parseInt(score) })
-        });
-
-        if (!patch.ok) {
-          alert("Failed to update score.");
-        }
-        return;
-      } else {
-        username = "";
-        continue;
-      }
+      await supabase.from("leaderboard").update({ score }).eq("username", username);
+    } else {
+      await supabase.from("leaderboard").insert({ username, score });
     }
-  }
-
-  const response = await fetch("https://chtkfzwofusetduxxorv.supabase.co/rest/v1/leaderboard", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: anonKey,
-      Authorization: `Bearer ${anonKey}`,
-      Prefer: "return=representation"
-    },
-    body: JSON.stringify({ username, score: parseInt(score) })
-  });
-
-  if (!response.ok) {
-    const data = await response.json();
-    console.error("Error saving score:", data);
-    alert("Error saving your score.");
+  } catch (err) {
+    alert("Failed to save score. Try again.");
+    console.error("Score save error:", err.message);
   }
 }
 
-// 🔠 Capitalizer
+
+// 🔠 Capitalize helper
 function capitalize(text) {
-  if (!text) return '';
+  if (!text) return "";
   return text
     .split("/")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join("/");
 }
 
-// ❓ Get Question
 async function getQuestion() {
-  const res = await fetch(`${apiUrl}?score=${score}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`https://chtkfzwofusetduxxorv.supabase.co/functions/v1/pokemon-question?score=${score}`);
+    const data = await res.json();
 
-  currentAnswer = data.answer;
-  questionEl.textContent = data.question;
-  resultEl.textContent = "";
-  choicesEl.innerHTML = "";
+    currentAnswer = data.answer;
+    questionEl.textContent = data.question;
+    resultEl.textContent = "";
+    choicesEl.innerHTML = "";
+    spriteEl.src = data.sprite || "";
 
-  if (data.sprite) spriteEl.src = data.sprite;
-  else spriteEl.src = "";
+    data.choices.forEach((choice, index) => {
+      const btn = document.createElement("button");
+      const emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣"];
+      btn.innerHTML = `<span class="icon">${emojis[index]}</span> ${capitalize(choice)}`;
+      btn.onclick = () => checkAnswer(choice);
+      choicesEl.appendChild(btn);
+    });
 
-  data.choices.forEach((choice, index) => {
-    const btn = document.createElement("button");
-    const emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣"];
-    btn.innerHTML = `<span class="icon">${emojis[index] || "🔘"}</span> ${capitalize(choice)}`;
-    btn.onclick = () => checkAnswer(choice);
-    choicesEl.appendChild(btn);
-  });
+    document.onkeydown = (e) => {
+      const index = parseInt(e.key) - 1;
+      const btns = choicesEl.querySelectorAll("button");
+      if (index >= 0 && index < btns.length) btns[index].click();
+    };
 
-  // Enable keyboard choice input
-  document.onkeydown = (e) => {
-    const index = parseInt(e.key) - 1;
-    const btns = choicesEl.querySelectorAll("button");
-    if (index >= 0 && index < btns.length) {
-      btns[index].click();
-    }
-  };
-
-  startTimer();
+    startTimer();
+  } catch (err) {
+    questionEl.textContent = "⚠️ Could not load question.";
+    resultEl.textContent = "Try refreshing or check your connection.";
+    console.error("Question error:", err.message);
+  } // <-- ✅ this closing brace was missing!
 }
+
 
 // ⏳ Timer
 function startTimer() {
@@ -174,7 +196,7 @@ function startTimer() {
   }, 1000);
 }
 
-// ✅ or ❌ Answer
+// ✅/❌ Answer
 async function checkAnswer(choice) {
   clearInterval(timer);
 
@@ -193,7 +215,7 @@ async function checkAnswer(choice) {
   }
 }
 
-// 🛑 End Game
+// 🛑 End game
 function endGame(message) {
   alert(message);
   quizScreen.style.display = "none";
@@ -201,7 +223,7 @@ function endGame(message) {
   loadLeaderboard();
 }
 
-// ▶️ Start Quiz
+// ▶️ Start quiz
 startBtn.onclick = () => {
   score = 0;
   scoreEl.textContent = "Score: 0";
@@ -210,5 +232,5 @@ startBtn.onclick = () => {
   getQuestion();
 };
 
-// 🚀 Initial Load
+// Initial Load
 loadLeaderboard();
